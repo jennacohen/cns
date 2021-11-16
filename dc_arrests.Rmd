@@ -1,0 +1,42 @@
+---
+title: "dc_arrests"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Load libraries
+```{r}
+library(tidyverse)
+#install.packages('lubridate')
+library(lubridate)
+```
+
+
+Load data and rename columns so they're easier to work with
+```{r}
+dc_arrests<- read_csv("data/dc_arrest_data.csv")
+
+dc_arrests<- dc_arrests %>% 
+  rename("arrest_date" = "Arrest Date",
+         "offense_date" = "Offense Date",
+         "offense_block_location" = "Offense Block Location",
+         "first_name" = "Defendant First Name",
+         "last_name"= "Defendant Last Name",
+         "age_at_arrest"="Age at Arrest",
+         "state" = "State",
+         "charge" = "Charge(s)"
+         )
+
+```
+mutate date columns to be dates not strings
+```{r}
+dc_arrests<- dc_arrests %>% 
+   mutate(arrest_date = mdy(arrest_date),
+          offense_date = mdy(offense_date))
+```
+

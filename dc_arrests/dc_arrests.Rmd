@@ -1,0 +1,59 @@
+---
+title: "dc_arrests"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Load libraries
+```{r}
+library(tidyverse)
+#install.packages('lubridate')
+library(lubridate)
+```
+
+
+Load data and rename columns so they're easier to work with
+```{r}
+dc_arrests<- read_csv("data/dc_arrest_data.csv")
+
+dc_arrests<- dc_arrests %>% 
+  rename("arrest_date" = "Arrest Date",
+         "offense_date" = "Offense Date",
+         "offense_block_location" = "Offense Block Location",
+         "first_name" = "Defendant First Name",
+         "last_name"= "Defendant Last Name",
+         "age_at_arrest"="Age at Arrest",
+         "state" = "State",
+         "charge" = "Charge(s)"
+         )
+
+```
+mutate date columns to be dates not strings
+```{r}
+dc_arrests<- dc_arrests %>% 
+   mutate(arrest_date = mdy(arrest_date),
+          offense_date = mdy(offense_date))
+```
+data starts at 5-30-20, main BLM protests thru 6-3-20, 5-31 curfew was put in place, ended 6-3
+
+5-31 - church bible 
+
+insurrection 1-6-21
+
+Questions to ask:
+what does unrest related data mean?
+right rallies- do more people get killed?
+download all data from 2020-2021 in dc area - Aadit
+talk to professors that teach conflict related stuff? people who study conflict? what causes conflict and civil unrest?
+1. How many people were arrested at each event?
+  - compare individual days of protests to insurrection
+2. How many people were arrested specifically for curfew violations? 
+3. How many minors were arrested at each event?
+4. What were the most common charges for each event?
+
+

@@ -1,0 +1,26 @@
+---
+title: "dc_protests"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r}
+install.packages('tidyverse')
+install.packages('rmarkdown')
+install.packages('lubridate')
+```
+
+```{r}
+library(tidyverse)
+#only showing 2021 and 2020
+dc_protests<- read.csv("1900-01-01-2021-11-16-North_America-United_States-Washington_DC.csv")
+```
+
+
+
