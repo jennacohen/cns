@@ -118,9 +118,9 @@ jan6_offenses<- dc_arrests %>%
     offense_count = n()
   )
 
-jan6_arrest_info <- jan6_offenses %>% 
-  left_join(jan6_arrests, by=c('offense_date'='arrest_date')) %>% 
-  rename(date = offense_date)
+jan6_arrest_info <- jan6_arrests %>% 
+  left_join(jan6_offenses, by=c('arrest_date'='offense_date')) %>% 
+  rename(date = arrest_date)
 
 
 
