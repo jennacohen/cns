@@ -14,6 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 #install.packages('lubridate')
 library(lubridate)
+#install.packages('janitor')
+library(janitor)
 ```
 
 download all data from 2020-2021, filter an review for dc area - Aadit
@@ -43,15 +45,7 @@ blm_conflict<- us_conflicts %>%
 dc_arrests<- read_csv("data/dc_arrest_data.csv")
 
 dc_arrests<- dc_arrests %>% 
-  rename("arrest_date" = "Arrest Date",
-         "offense_date" = "Offense Date",
-         "offense_block_location" = "Offense Block Location",
-         "first_name" = "Defendant First Name",
-         "last_name"= "Defendant Last Name",
-         "age_at_arrest"="Age at Arrest",
-         "state" = "State",
-         "charge" = "Charge(s)"
-         )
+  clean_names()
 
 ```
 mutate date columns to be dates not strings
