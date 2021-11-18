@@ -94,7 +94,7 @@ blm_offenses<- dc_arrests %>%
 blm_arrest_info <- blm_arrests %>% 
   left_join(blm_offenses, by=c('arrest_date'='offense_date')) %>% 
   rename(date = arrest_date)
-
+# skipping 6-4 for some reason???
 
 #insurrection arrests/offenses
 
