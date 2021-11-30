@@ -210,8 +210,34 @@ jan6_charges_split<- jan6_charges %>%
   arrange(desc(sum_arrests))
 
 ```
+Exporting top 5 charges for each event 
+```{r}
+
+blm_531_charges<- blm_may_31 %>% 
+  head(5)
+
+blm_601_charges<- blm_june_1 %>% 
+  head(5)
+
+jan6_top_charges<- jan6_charges_split %>% 
+  head(5)
+
+write.csv(blm_531_charges, "blm_531_charges.csv")
+write.csv(blm_601_charges, "blm_601_charges.csv")
+write.csv(jan6_top_charges, "jan6_top_charges.csv")
+
+```
+
+Also doing one big list to see if this chart would look cooler
+**IT DIDN"T**
+```{r}
+
+top_charges<- bind_rows(blm_531_charges,blm_601_charges,jan6_top_charges)
+
+write.csv(top_charges, "top_charges.csv")
 
 
+```
 3. How many people were arrested specifically for curfew violations? 
 
 ```{r}
