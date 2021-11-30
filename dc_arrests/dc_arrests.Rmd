@@ -23,7 +23,7 @@ download all data from 2020-2021, filter an review for dc area - Aadit
 
 ```{r}
 
-us_conflicts<- read_csv("data/us_conflict_data.csv")
+us_conflicts<- read_csv("data/us_conflicts.csv")
 
 us_conflicts<- us_conflicts %>% 
   mutate(event_date = dmy(event_date))
@@ -133,13 +133,13 @@ write_csv(arrests_by_offense_date, "arrests_by_offense_date")
 
 
   
-2. How many people were arrested specifically for curfew violations? 
+2. What were the most common charges for each event?
 
 ```{r}
 #blm charges
 blm_charges<- dc_arrests %>% 
-  filter(arrest_date > "2020-05-29" & arrest_date < "2020-06-06") %>% 
-  group_by(charge_s, arrest_date) %>% 
+  filter(offense_date > "2020-05-29" & offense_date < "2020-06-06") %>% 
+  group_by(charge_s, offense_date) %>% 
   summarise(
    count=n()
   ) %>% 
@@ -150,14 +150,15 @@ blm_charges_split<- blm_charges %>%
   mutate(charge_s = strsplit(str_squish(as.character(charge_s)), ",")) %>% 
   unnest(charge_s) %>% 
   mutate(charge_s = str_trim(charge_s,side="both")) %>% 
-  group_by(charge_s, arrest_date) %>% 
+  group_by(charge_s, offense_date) %>% 
   summarise(
    sum_arrests = sum(count)
   )
 
 #blm_may_31
 blm_may_31<- blm_charges_split %>% 
-  filter(arrest_date == "2020-05-31") 
+  filter(offense_date == "2020-05-31") %>% 
+  arrange(desc(sum_arrests)) 
   #%>% 
   #group_by(charge_s, arrest_date) %>% 
   #summarise(
@@ -168,7 +169,8 @@ blm_may_31<- blm_charges_split %>%
 
 #blm_june_1
 blm_june_1<- blm_charges_split %>% 
-  filter(arrest_date == "2020-06-01") 
+  filter(offense_date == "2020-06-01")%>% 
+  arrange(desc(sum_arrests)) 
   #%>% 
   #group_by(charge_s, arrest_date) %>% 
   #summarise(
@@ -184,18 +186,49 @@ blm_june_1<- blm_charges_split %>%
 
 #jan6_charges
 jan6_charges<- dc_arrests %>% 
-  filter(arrest_date == "2021-01-06") %>% 
-  group_by(charge_s, arrest_date) %>% 
+  filter(offense_date == "2021-01-06") %>%  
+  group_by(charge_s, offense_date) %>% 
   summarise(
    count=n()
   ) %>% 
   arrange(desc(count)) 
   #head(10)
 
+jan6_charges_split<- jan6_charges %>% 
+  mutate(charge_s = strsplit(str_squish(as.character(charge_s)), ",")) %>% 
+  unnest(charge_s) %>% 
+  mutate(charge_s = str_trim(charge_s,side="both")) %>%
+  mutate(charge_s = case_when(
+    charge_s == "Unlawful Entry" ~ "Unlawful entry",
+    #this "replaces" existing data that's spelled correctly with itself
+    TRUE ~ charge_s
+  )) %>%
+  group_by(charge_s, offense_date) %>% 
+  summarise(
+   sum_arrests = sum(count)
+  )%>% 
+  arrange(desc(sum_arrests))
+
 ```
 
 
-3. How many minors were arrested at each event?
-4. What were the most common charges for each event?
+3. How many people were arrested specifically for curfew violations? 
+
+```{r}
+blm_curfew_531<- blm_may_31%>% 
+  filter(charge_s == "Curfew Violation")
+
+blm_curfew_601<- blm_june_1%>% 
+  filter(charge_s == "Curfew Violation")
+
+jan6_curfew<- jan6_charges_split %>% 
+  filter(charge_s == "Curfew Violation")
+
+curfew_violations<- bind_rows(blm_curfew_531, blm_curfew_601, jan6_curfew)
+
+#write_csv here
+write_csv(curfew_violations, "curfew_violations")
+```
+
 
 
