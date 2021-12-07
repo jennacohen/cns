@@ -82,5 +82,7 @@ insurrection_arrests %>%
   arrange (desc(count))
 ```
 
-
+questions:
+- how to separate charges
+- how to automate this to update with new entries
 
