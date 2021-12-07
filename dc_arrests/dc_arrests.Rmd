@@ -21,6 +21,12 @@ library(janitor)
 download all data from 2020-2021, filter an review for dc area - Aadit
 ## Load conflict 
 
+
+### Nicks Notes
+- Is it supposed to be less than and greater than, or less than and equal etc...
+- What are data ids? They are unique
+- Does updated data have same numbers for the same dates?
+
 ```{r}
 
 us_conflicts<- read_csv("data/us_conflicts.csv")
@@ -36,11 +42,22 @@ blm_conflict<- us_conflicts %>%
   filter(admin1 == "District of Columbia" & event_date > "2020-05-30" & event_date < "2020-06-02") %>% 
   select(-data_id, -iso, -iso3, time_precision, -region, -country, -event_id_cnty, -event_id_no_cnty, -timestamp, -time_precision)
 
+###############Nicks Check on data id column ####################
 
+
+check_id = us_conflicts %>% 
+  group_by(data_id) %>% 
+  count()
 ```
 
 
+
+
+
 ## Load arrest data and rename columns so they're easier to work with
+
+### Nicks Questions
+- What are ccns? They are not unique, and it looks like they are location groups?
 ```{r}
 dc_arrests<- read_csv("data/dc_arrest_data.csv")
 
@@ -53,6 +70,12 @@ mutate date columns to be dates not strings
 dc_arrests<- dc_arrests %>% 
    mutate(arrest_date = mdy(arrest_date),
           offense_date = mdy(offense_date))
+
+
+### Nicks Checking ######
+ccn_check  = dc_arrests %>% 
+  group_by(ccn) %>% 
+  count()
 ```
 data starts at 5-30-20, main BLM protests through 6-3-20, 5-31 curfew was put in place, ended 6-3
 
@@ -75,6 +98,12 @@ talk to professors that teach conflict related stuff/people who study conflict? 
 1. How many people were arrested at each event?
   - compare individual days of protests to insurrection
   
+### Nick Data Check
+- If main blm protests went through 06-3-20, arent the date filters in the code wrong??
+- The same person can show up more than one time .....
+  - Jan 6th dc arrests joshua pruitt shows up twice for example
+- Jan 6th offenses you filtered for arrest instead of offenses like you did in blm
+
 ```{r}
 #blm arrests/offenses
 blm_arrests<- dc_arrests %>% 
@@ -90,6 +119,11 @@ blm_offenses<- dc_arrests %>%
   summarise(
     offense_count = n()
   )
+
+
+
+
+
 
 blm_arrest_info <- blm_arrests %>% 
   left_join(blm_offenses, by=c('arrest_date'='offense_date')) %>% 
@@ -116,7 +150,42 @@ jan6_arrest_info <- jan6_arrests %>%
   left_join(jan6_offenses, by=c('arrest_date'='offense_date')) %>% 
   rename(date = arrest_date)
 
+################################# Nick Checking uniqueness of names for blm ################################
 
+blm_dc_arrest_name = dc_arrests %>%
+  filter(arrest_date > "2020-05-30" & arrest_date < "2020-06-02") %>% 
+  group_by(defendant_first_name, defendant_last_name, age_at_arrest ) %>% 
+  count()
+
+blm_dc_offense_name = dc_arrests %>%
+  filter(offense_date > "2020-05-30" & offense_date < "2020-06-02") %>% 
+  group_by(defendant_first_name, defendant_last_name, age_at_arrest ) %>% 
+  count()
+
+blm_dc_arrest_name_all = dc_arrests %>%
+  group_by(defendant_first_name, defendant_last_name, age_at_arrest ) %>% 
+  count()
+
+#####
+
+
+##################################Nick Checking Uniqueness of names for riots ######################################
+jan6_arrest_name<- dc_arrests %>% 
+  filter(arrest_date > "2021-01-05" & arrest_date < "2021-01-07") %>% 
+  group_by(defendant_first_name, defendant_last_name, age_at_arrest ) %>% 
+  count()
+
+
+jan6_offense_name<- dc_arrests %>% 
+  filter(offense_date > "2021-01-05" & offense_date < "2021-01-07") %>% 
+  group_by(defendant_first_name, defendant_last_name, age_at_arrest ) %>% 
+  count()
+
+jan6_arrests_ungrouped <- dc_arrests %>% 
+  filter(arrest_date > "2021-01-05" & arrest_date < "2021-01-07")
+
+jan6_offense_ungrouped <- dc_arrests %>% 
+  filter(offense_date > "2021-01-05" & offense_date < "2021-01-07")
 
 ```
   
@@ -134,6 +203,9 @@ write_csv(arrests_by_offense_date, "arrests_by_offense_date")
 
   
 2. What were the most common charges for each event?
+
+### Nick questions
+- Why do you start filtering on 05-29 when you started on 05_30 for previous code?
 
 ```{r}
 #blm charges
@@ -257,4 +329,49 @@ write_csv(curfew_violations, "curfew_violations")
 ```
 
 
+### Data Sentences Nick Check
+
+arrested 363 people over two days of Black Lives Matter demonstrations
+
+```{r}
+
+```
+
+only 61 people at the Jan. 6 insurrection
+
+```{r}
+
+```
+
+Black Lives Matter protestors were arrested over five times more than people who took part in the Jan. 6 insurrection.
+
+```{r}
+
+```
+
+
+Curfew Violations: Insurrection Arrests Were a Fraction of Black Lives Matter Arrests
+
+```{r}
+
+```
+
+
+The difference between curfew violation arrests between the two events is also stark, with five times more arrests during the Black Lives Matter demonstrations than the Capitol demonstration.
+
+```{r}
+
+```
+
+Apart from curfew violations, Black Lives Matter demonstrations saw the highest concentration of riot act- felony and second-degree burglary charges
+
+```{r}
+
+```
+
+On Jan. 6, unlawful entry was the second most common charge. There was only one arrest for a riot act- felony on Jan. 6. 
+
+```{r}
+
+```
 
