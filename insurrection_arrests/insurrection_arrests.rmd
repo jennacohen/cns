@@ -63,8 +63,12 @@ insurrection_arrests <- insurrection_arrests %>%
   rowwise() %>% 
   mutate(
     city = str_split(location_of_arrest, ",")[[1]][2],
-    state = str_split(location_of_arrest, ",")[[1]][1]
+    state = str_split(location_of_arrest, ",")[[1]][1],
+    city= str_trim(city,side="both"),
+    state= str_trim(state,side="both"),
     )
+
+#need to squish to remove white space before city names
 
 ```
 
