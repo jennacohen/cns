@@ -68,10 +68,19 @@ insurrection_arrests <- insurrection_arrests %>%
     state= str_trim(state,side="both"),
     )
 
-#need to squish to remove white space before city names
-
 ```
 
+messing around
+
+```{r}
+
+insurrection_arrests %>% 
+  group_by(state) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  arrange (desc(count))
+```
 
 
 
