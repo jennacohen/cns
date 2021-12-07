@@ -85,4 +85,5 @@ insurrection_arrests %>%
 questions:
 - how to separate charges
 - how to automate this to update with new entries
+- 
 
