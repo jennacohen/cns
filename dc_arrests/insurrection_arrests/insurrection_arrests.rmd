@@ -51,10 +51,7 @@ insurrection_arrests<- insurrection_arrests %>%
   mutate(
     name = str_to_upper(name),
     location_of_arrest = str_to_upper(location_of_arrest),
-    entry_last_updated = mdy(entry_last_updated),
-    city = str_split(str_squish(location_of_arrest, ","))[[1]][2],
-    state = str_split(location_of_arrest, ",")[[1]][1]
-    #city = strsplit(str_squish(as.character(city)), ",")
+    entry_last_updated = mdy(entry_last_updated)
   )
 
 ```
@@ -62,7 +59,7 @@ insurrection_arrests<- insurrection_arrests %>%
 ```{r}
 #glimpse(insurrection_arrests)
 
-sep_location <- insurrection_arrests %>% 
+insurrection_arrests <- insurrection_arrests %>% 
   rowwise() %>% 
   mutate(
     city = str_split(location_of_arrest, ",")[[1]][2],
