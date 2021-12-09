@@ -1,0 +1,103 @@
+---
+title: "insurrection_arrests"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Libs
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+# Load the tidyverse,rvest,janitor
+library(rvest)
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(stringr)
+```
+
+saving the url
+
+```{r}
+
+insurrection_data_url<- "https://www.justice.gov/usao-dc/capitol-breach-cases?combine=&order=changed&sort=desc"
+
+```
+
+reading in the html & table
+
+```{r}
+insurrection_html <- insurrection_data_url %>%
+  read_html() %>% 
+  html_table()
+
+#insurrection_html
+```
+
+saving and cleaning the table
+
+```{r}
+insurrection_arrests <- insurrection_html [[1]]
+
+insurrection_arrests<- insurrection_arrests %>% 
+  clean_names() %>% 
+  rename(
+    charges = charge_s
+  ) %>% 
+  rowwise() %>% 
+  mutate(
+    name = str_to_upper(name),
+    location_of_arrest = str_to_upper(location_of_arrest),
+    entry_last_updated = mdy(entry_last_updated)
+  )
+
+```
+
+```{r}
+#glimpse(insurrection_arrests)
+
+insurrection_arrests <- insurrection_arrests %>% 
+  rowwise() %>% 
+  mutate(
+    city = str_split(location_of_arrest, ",")[[1]][2],
+    state = str_split(location_of_arrest, ",")[[1]][1],
+    city= str_trim(city,side="both"),
+    state= str_trim(state,side="both"),
+    )
+
+```
+
+messing around
+
+```{r}
+
+insurrection_arrests %>% 
+  group_by(state) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  arrange (desc(count))
+```
+
+
+aadit stuff
+
+```{r}
+
+insurrection_arrests$charges_clean = str_replace_all(insurrection_arrests$charges, '\n\n','; ')
+insurrection_arrests$charges_clean = str_replace_all(insurrection_arrests$charges_clean, '\n','; ')
+
+
+#write_csv(insurrection_arrests,"insur_arrests.csv")
+
+
+```
+questions:
+- how to separate charges
+- how to automate this to update with new entries
+- 
+
